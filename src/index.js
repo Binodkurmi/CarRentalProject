@@ -13,7 +13,7 @@ const root = ReactDOM.createRoot(document.getElementById("root")); // Create a r
 root.render(
   <React.StrictMode>
     <Router>
-      <App /> {/* Main application component */}
+      <App />
     </Router>
   </React.StrictMode>
 );

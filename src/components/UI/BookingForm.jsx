@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "../../styles/booking-form.css";
 import { Form, FormGroup, Button } from "reactstrap";
 import axios from "axios";  // Import axios
+import { useNavigate } from "react-router-dom";
 
 const BookingForm = () => {
   const [formData, setFormData] = useState({
@@ -17,6 +18,7 @@ const BookingForm = () => {
     journeyTime: "",
     comments: "",
   });
+	const navigate = useNavigate();
 
   // Handle input changes
   const handleChange = (event) => {
@@ -27,6 +29,12 @@ const BookingForm = () => {
   // Handle form submission
   const submitHandler = async (event) => {
     event.preventDefault();
+
+		const token = localStorage.getItem("accessToken");
+    if (!token) {
+      navigate("/login");
+      return;
+    }
 
     try {
       // Make the API call to submit the booking data

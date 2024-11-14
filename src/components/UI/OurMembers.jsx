@@ -18,7 +18,7 @@ const OUR__MEMBERS = [
   },
 
   {
-    name: "Subhan Ali",
+    name: "Aliya",
     experience: "5 years of experience",
     fbUrl: "#",
     instUrl: "#",
@@ -38,7 +38,7 @@ const OUR__MEMBERS = [
   },
 
   {
-    name: "Xyz",
+    name: "Subhan Ali",
     experience: "5 years of experience",
     fbUrl: "#",
     instUrl: "#",

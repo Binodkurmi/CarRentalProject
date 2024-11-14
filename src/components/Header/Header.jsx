@@ -33,17 +33,20 @@ const Header = () => {
     password: "",
     confirmPassword: "",
   });
+	const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [errors, setErrors] = useState({});
 
   const toggleMenu = () => menuRef.current.classList.toggle("menu__active");
   const toggleModal = () => setModalOpen(!modalOpen); // Function to toggle modal
 
   const openLogin = () => {
+		console.log("formData", formData)
     setIsRegister(false);
     toggleModal();
   };
 
   const openRegister = () => {
+		console.log("formData", formData)
     setIsRegister(true);
     toggleModal();
   };
@@ -53,6 +56,8 @@ const Header = () => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
+
+	console.log("formData", formData)
 
   // Validate form
   const validateForm = () => {
@@ -88,12 +93,58 @@ const Header = () => {
   };
 
   // Handle form submission
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    if (validateForm()) {
-      alert(isRegister ? "Registration successful!" : "Login successful!");
-      toggleModal(); // Close modal on successful form submission
-    }
+	const handleSubmit = async (e) => {
+		e.preventDefault();
+		if (validateForm()) {
+			try {
+				if (isRegister) {
+					const response = await fetch("http://localhost:5000/api/auth/register", {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify(formData),
+					});
+					
+					if (!response.ok) {
+						const errorData = await response.json();
+						throw new Error(errorData.message || "Registration failed");
+					}
+	
+					alert("Registration successful!");
+					toggleModal();
+				} else {
+					const response = await fetch("http://localhost:5000/api/auth/login", {
+						method: "POST",
+						headers: { "Content-Type": "application/json" },
+						body: JSON.stringify({
+							email: formData.email,
+							password: formData.password,
+						}),
+					});
+					
+					if (!response.ok) {
+						const errorData = await response.json();
+						throw new Error(errorData.message || "Login failed");
+					}
+	
+					const data = await response.json();
+					const { token } = data;
+					localStorage.setItem("accessToken", token);
+					setIsLoggedIn(true);
+					alert("Login successful!");
+					toggleModal();
+				}
+			} catch (error) {
+				console.error("Error:", error.message);
+				setErrors({ ...errors, form: error.message });
+			}
+		}
+	};
+	
+
+  const handleLogout = () => {
+    localStorage.removeItem("accessToken");
+    setIsLoggedIn(false);
+    alert("Logged out successfully!");
   };
 
   // Handle social login
@@ -121,13 +172,21 @@ const Header = () => {
               </div>
             </Col>
             <Col lg="6" md="6" sm="6">
-              <div className="header__top__right d-flex align-items-center justify-content-end gap-3">
-                <Link to="#" className="d-flex align-items-center gap-1" onClick={openLogin}>
-                  <i className="ri-login-circle-line"></i> Login
-                </Link>
-                <Link to="#" className="d-flex align-items-center gap-1" onClick={openRegister}>
-                  <i className="ri-user-line"></i> Register
-                </Link>
+						<div className="header__top__right d-flex align-items-center justify-content-end gap-3">
+                {isLoggedIn ? (
+                  <Button onClick={handleLogout} className="logout-button">
+                    Logout
+                  </Button>
+                ) : (
+                  <>
+                    <Link to="#" className="d-flex align-items-center gap-1" onClick={openLogin}>
+                      <i className="ri-login-circle-line"></i> Login
+                    </Link>
+                    <Link to="#" className="d-flex align-items-center gap-1" onClick={openRegister}>
+                      <i className="ri-user-line"></i> Register
+                    </Link>
+                  </>
+                )}
               </div>
             </Col>
           </Row>
