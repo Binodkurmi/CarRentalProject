@@ -22,8 +22,8 @@ const Routers = () => {
       <Route path="/blogs" element={<Blog />} />
       <Route path="/blogs/:slug" element={<BlogDetails />} />
       <Route path="/contact" element={<Contact />} />
-      <Route path="/login" element={<Login />} />
-      <Route path="/register" element={<Register />} />
+      {/* <Route path="/login" element={<Login />} />
+      <Route path="/register" element={<Register />} /> */}
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
